@@ -8,7 +8,7 @@
 
 char fileStr[MAXLENGF];
 
-int fileToStr(char* str);
+void fileToStr(char* str);
 
 int main()
 {
@@ -17,22 +17,21 @@ int main()
     return 0;
 }
 
-int fileToStr(char* str) {
-    int status;
+void fileToStr(char* str) {
     FILE* fp = NULL;
 
     fp = fopen(FNAME, "r");
     if (fp == NULL) {
         printf("File does not exist\n");
-        return -1;
+        return;
     }
-    status = fread(str, MAXLENGF, 1, fp);
 
-    printf("Noi dung cua file log.txt: \n%s", str);
+    fread(str, MAXLENGF, 1, fp);
+
+    printf("File details: \n%s", str);
 
     fclose(fp);
     fp = NULL;
-    return status;
 }
 
 
