@@ -3,96 +3,90 @@
 #include <string.h>
 
 #define FNAME "log.txt"
-#define MAXLENGF 5000
+#define MAXLENGTH 5000
 
-char fileStr[MAXLENGF];
+char fileStr[MAXLENGTH];
 
-//Protocals
+// Prototypes
 int fileToStr(char* str);
 int countNews(char mainStr[], char subStr[]);
-void FilterStr(char userInputStr, char tokens[]);
+void matchStr(char json[], char* tokens[], char subStr[]);
+void TokenizeStr(char json[], char* tokens[]);
 
-int main()
-{
-    //Save details into a string
+int main() {
+    // Save details into a string
     int status = fileToStr(fileStr);
-    
-    //Question 1: Count the number of messages was sent
-    // char requiredChar[] = "\"cmd\":\"set\"";
+
+    // Question 1: Count the number of messages containing specific keywords
+    char requiredChar[] = "\"cmd\":\"set\"";
     // int nCount = countNews(fileStr, requiredChar);
+    // printf("The number of messages containing the keyword \"%s\": %d\n", requiredChar, nCount);
 
-    // printf("The amount of news being sent was: %i", nCount);
+    // Question 2: Find and store strings that match the substring
+    char *tokens[MAXLENGTH]; // Array to store tokens
 
-    //Question 2: Find a user's input
-    char *tokens[MAXLENGF] = {0};  // Array to store tokens
+    // Tokenize the string into an array based on newline delimiter
+    TokenizeStr(fileStr, tokens);
 
+    matchStr(fileStr, tokens, requiredChar);
 
-    char breakLine[] = "\n";
+    // printf("\nStrings matching the keyword \"%s\":\n", requiredChar);
+    // for (int i = 0; tokens[i] != NULL; i++) {
+    //     printf("Token %d: %s\n", i+1, tokens[i]);
+    // }
 
-    int countLines = countNews(fileStr,breakLine);
-
-    FilterStr(fileStr, countLines, tokens);
-
-    char userInputChar[MAXLENGF];
     
-
-
-    printf("Enter the network address: ");
-    scanf("%s", &userInputChar);
-
     return 0;
 }
 
-int fileToStr(char* str) { //Check the file availability and readability
-    int status = 0;
-    FILE* fp = NULL;
-
-    fp = fopen(FNAME, "r");
+int fileToStr(char* str) {
+    FILE* fp = fopen(FNAME, "r");
     if (fp == NULL) {
         printf("File does not exist\n");
         return -1;
     }
 
-    status = fread(str, sizeof(char), MAXLENGF, fp);
-
-    // printf("File details: \n%s", str);
-
+    int status = fread(str, sizeof(char), MAXLENGTH, fp);
     fclose(fp);
-    fp = NULL;
-
+    
     return status;
 }
 
-int countNews(char mainStr[], char subStr[]) { //Count the amount of news being sent with specific keywords
+int countNews(char mainStr[], char subStr[]) {
     int count = 0;
     char *pCount = strstr(mainStr, subStr);
 
     while (pCount != NULL) {
         count++;
-        pCount = strstr(pCount + 1, subStr);
+        pCount = strstr(pCount + strlen(subStr), subStr);
     }
 
     return count;
 }
 
-void FilterStr(char json[], int amount, char* tokens[]) {
-    char *token = strtok(tokens, "\n");
-    
-    //Tokening the string into an array
-    for (int i = 0; token != NULL; i++) {
+void matchStr(char json[], char* tokens[], char subStr[]) {
+    int i = 0;
+    char *ptrStr = strstr(tokens[i], subStr);
+
+
+    while (ptrStr != NULL) {
+        tokens[i] = ptrStr;
+        printf("%s \n", tokens[i]);
+        i++;
+        // ptrStr = strstr(ptrStr + 1, subStr);
+    }
+}
+
+void TokenizeStr(char json[], char* tokens[]) {
+    char *token = strtok(json, "\n");
+    int i = 0;
+
+    // Tokenizing the string into an array based on newline delimiter
+    while (token != NULL) {
+        tokens[i] = token;
+        i++;
         token = strtok(NULL, "\n");
     }
 
-    //Count strings that contain cmd:set
-    char temp[MAXLENGF];
-
-    for (int i = 0; i < amount; i++) {
-        if (strstr()) {
-
-        }
-    }
-
+    tokens[i] = NULL; // Mark the end of tokens with NULL
 }
-
-
-
