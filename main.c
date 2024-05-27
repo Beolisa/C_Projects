@@ -10,8 +10,8 @@ char fileStr[MAXLENGTH];
 // Prototypes
 int fileToStr(char* str);
 int countNews(char mainStr[], char subStr[]);
-void matchStr(char json[], char* tokens[], char subStr[]);
-void TokenizeStr(char json[], char* tokens[]);
+int tokenizeStr(char mainStr[], char *tokens[]);
+void FilterStr(char *tokens[], char subStr[], int leng);
 
 int main() {
     // Save details into a string
@@ -19,23 +19,21 @@ int main() {
 
     // Question 1: Count the number of messages containing specific keywords
     char requiredChar[] = "\"cmd\":\"set\"";
-    // int nCount = countNews(fileStr, requiredChar);
-    // printf("The number of messages containing the keyword \"%s\": %d\n", requiredChar, nCount);
+    int nCount = countNews(fileStr, requiredChar);
+    //printf("The number of messages containing the keyword \"%s\": %d\n", requiredChar, nCount);
 
     // Question 2: Find and store strings that match the substring
     char *tokens[MAXLENGTH]; // Array to store tokens
 
-    // Tokenize the string into an array based on newline delimiter
-    TokenizeStr(fileStr, tokens);
+    //Tokenize the string into an array
+    int leng = tokenizeStr(fileStr, tokens);
 
-    matchStr(fileStr, tokens, requiredChar);
-
-    // printf("\nStrings matching the keyword \"%s\":\n", requiredChar);
-    // for (int i = 0; tokens[i] != NULL; i++) {
-    //     printf("Token %d: %s\n", i+1, tokens[i]);
+    // printf("\nTokens:\n");
+    // for (int i = 0; i < leng; i++) {
+    //     printf("Token %d: %s\n", i + 1, tokens[i]);
     // }
+    FilterStr(tokens, requiredChar, leng);
 
-    
     return 0;
 }
 
@@ -64,29 +62,24 @@ int countNews(char mainStr[], char subStr[]) {
     return count;
 }
 
-void matchStr(char json[], char* tokens[], char subStr[]) {
-    int i = 0;
-    char *ptrStr = strstr(tokens[i], subStr);
-
-
-    while (ptrStr != NULL) {
-        tokens[i] = ptrStr;
-        printf("%s \n", tokens[i]);
-        i++;
-        // ptrStr = strstr(ptrStr + 1, subStr);
-    }
-}
-
-void TokenizeStr(char json[], char* tokens[]) {
-    char *token = strtok(json, "\n");
+int tokenizeStr(char mainStr[], char *tokens[]) { //Tokenizing the string to arrays
+    char *token = strtok(mainStr, "\n");
     int i = 0;
 
-    // Tokenizing the string into an array based on newline delimiter
     while (token != NULL) {
         tokens[i] = token;
         i++;
         token = strtok(NULL, "\n");
     }
 
-    tokens[i] = NULL; // Mark the end of tokens with NULL
+    return i;
+}
+
+void FilterStr(char *tokens[], char subStr[], int leng) {
+    int i = 0;
+    char *ptrStr = strstr(tokens[i], subStr);
+    
+    char *tempArr[MAXLENGTH]; //Array of pointers to store filtered tokens
+
+
 }
