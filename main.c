@@ -28,12 +28,26 @@ int main() {
     //Tokenize the string into an array
     int leng = tokenizeStr(fileStr, tokens);
 
+    FilterStr(tokens, requiredChar, leng);
+
+    char networkID[10];
+    printf("Enter the network ID: ");
+    scanf("%s", &networkID);
+
+    int filterLeng = 0;
+    while (tokens[filterLeng] != NULL) {
+        filterLeng++;
+    }
+
+    printf("------------------------------------\n");
+    FilterStr(tokens, networkID, filterLeng);
+
     // printf("\nTokens:\n");
     // for (int i = 0; i < leng; i++) {
     //     printf("Token %d: %s\n", i + 1, tokens[i]);
     // }
-    FilterStr(tokens, requiredChar, leng);
 
+    printf("End of the main function.");
     return 0;
 }
 
@@ -77,9 +91,28 @@ int tokenizeStr(char mainStr[], char *tokens[]) { //Tokenizing the string to arr
 
 void FilterStr(char *tokens[], char subStr[], int leng) {
     int i = 0;
-    char *ptrStr = strstr(tokens[i], subStr);
-    
-    char *tempArr[MAXLENGTH]; //Array of pointers to store filtered tokens
+    char *tempArr[MAXLENGTH]; // Array of pointers to store filtered tokens
+    int tempIndex = 0; // Index for tempArr
 
+    while (i < leng) {
+        char *ptrStr = strstr(tokens[i], subStr);
+        if (ptrStr != NULL) {
+            tempArr[tempIndex] = ptrStr; // Copy the pointer to tempArr
+            tempIndex++;
+        }
+        i++; // Move to the next token
+    }
 
+    //Print or process the filtered tokens
+    for (int j = 0; j < tempIndex; j++) {
+        printf("Filtered Token %d: %s\n", j, tempArr[j]);
+    }
+
+    for (int i = 0; i < tempIndex; i++) {
+        strcpy(tokens[i], tempArr[i]);
+    }
+
+    for (int i = 9; i < leng; i++) {
+        tokens[i] = NULL; //Fill the rest with NULL  
+    }
 }
