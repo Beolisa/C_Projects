@@ -39,15 +39,23 @@ int main() {
         filterLeng++;
     }
 
-    printf("------------------------------------\n");
     FilterStr(tokens, networkID, filterLeng);
 
-    // printf("\nTokens:\n");
-    // for (int i = 0; i < leng; i++) {
-    //     printf("Token %d: %s\n", i + 1, tokens[i]);
+    int i = 0;
+    // while (tokens[i] != NULL) {
+    //     printf("Token %i: %s \n", i, tokens[i]);
+    //     i++;
     // }
 
-    printf("End of the main function.");
+    //Question 3:
+    char *tokens2[MAXLENGTH];
+    int leng2 = tokenizeStr(fileStr, tokens);
+
+    FilterStr(tokens2, requiredChar, leng2);
+    char *pattern = "zwave-";
+
+    
+
     return 0;
 }
 
@@ -104,15 +112,35 @@ void FilterStr(char *tokens[], char subStr[], int leng) {
     }
 
     //Print or process the filtered tokens
-    for (int j = 0; j < tempIndex; j++) {
-        printf("Filtered Token %d: %s\n", j, tempArr[j]);
-    }
+    // for (int j = 0; j < tempIndex; j++) {
+    //     printf("Filtered Token %d: %s\n", j, tempArr[j]);
+    // }
 
     for (int i = 0; i < tempIndex; i++) {
         strcpy(tokens[i], tempArr[i]);
     }
 
-    for (int i = 9; i < leng; i++) {
+    for (int i = tempIndex; i < leng; i++) {
         tokens[i] = NULL; //Fill the rest with NULL  
     }
+}
+
+void getDevice(char *tokens[], char subStr[]) { //Sample
+    const char *inputString = "data\":[\"zwave-ffa2:4-1\"]";
+    const char *pattern = "zwave-";
+    
+    const char *foundStr = strstr(inputString, pattern);
+
+    if (foundStr != NULL) {
+        char extractedStr[5];  // Assuming 'ffa2' has 4 characters
+
+        // Copy characters after 'zwave-' into extractedStr
+        strncpy(extractedStr, foundStr + strlen(pattern), 4);
+        //extractedStr[4] = '\0';  // Null terminate the extracted string
+
+        printf("Extracted substring: %s\n", extractedStr);
+    } else {
+        printf("Pattern not found in the input string.\n");
+    }
+
 }
