@@ -12,6 +12,7 @@ int fileToStr(char* str);
 int countNews(char mainStr[], char subStr[]);
 int tokenizeStr(char mainStr[], char *tokens[]);
 void FilterStr(char *tokens[], char subStr[], int leng);
+void getDevice(char *tokens[]);
 
 int main() {
     // Save details into a string
@@ -26,20 +27,20 @@ int main() {
     char *tokens[MAXLENGTH]; // Array to store tokens
 
     //Tokenize the string into an array
-    int leng = tokenizeStr(fileStr, tokens);
+    // int leng = tokenizeStr(fileStr, tokens);
 
-    FilterStr(tokens, requiredChar, leng);
+    // FilterStr(tokens, requiredChar, leng);
 
-    char networkID[10];
-    printf("Enter the network ID: ");
-    scanf("%s", &networkID);
+    // char networkID[10];
+    // printf("Enter the network ID: ");
+    // scanf("%s", &networkID);
 
-    int filterLeng = 0;
-    while (tokens[filterLeng] != NULL) {
-        filterLeng++;
-    }
+    // int filterLeng = 0;
+    // while (tokens[filterLeng] != NULL) {
+    //     filterLeng++;
+    // }
 
-    FilterStr(tokens, networkID, filterLeng);
+    // FilterStr(tokens, networkID, filterLeng);
 
     int i = 0;
     // while (tokens[i] != NULL) {
@@ -49,12 +50,11 @@ int main() {
 
     //Question 3:
     char *tokens2[MAXLENGTH];
-    int leng2 = tokenizeStr(fileStr, tokens);
+    //int leng2 = tokenizeStr(fileStr, tokens);
 
-    FilterStr(tokens2, requiredChar, leng2);
-    char *pattern = "zwave-";
+    //FilterStr(tokens2, requiredChar, leng2);
 
-    
+    getDevice(tokens2);
 
     return 0;
 }
@@ -125,22 +125,52 @@ void FilterStr(char *tokens[], char subStr[], int leng) {
     }
 }
 
-void getDevice(char *tokens[], char subStr[]) { //Sample
-    const char *inputString = "data\":[\"zwave-ffa2:4-1\"]";
+void getDevice(char *tokens[]) { //Sample
+    //const char *inputString = "\"data\":[\"zwave-dc53:4-1\"]";
     const char *pattern = "zwave-";
-    
-    const char *foundStr = strstr(inputString, pattern);
+    char *tempArr[MAXLENGTH];
+    int i = 0;
 
-    if (foundStr != NULL) {
-        char extractedStr[5];  // Assuming 'ffa2' has 4 characters
+    char *deviceName[10]; //Assume there are only 10 different devices
+    char *endpoint[10]; //Assume there are only 10 different endpoints
 
-        // Copy characters after 'zwave-' into extractedStr
-        strncpy(extractedStr, foundStr + strlen(pattern), 4);
-        //extractedStr[4] = '\0';  // Null terminate the extracted string
+    int tempArr1 = 0; 
+    int tempArr2 = 0;
 
-        printf("Extracted substring: %s\n", extractedStr);
-    } else {
-        printf("Pattern not found in the input string.\n");
+    while (tokens[i] != NULL) {
+        const char *foundStr = strstr(tokens[i], pattern);
+
+        if (foundStr != NULL) {
+            char extractedStr[5];  // Assuming 'ffa2' has 4 characters
+            char endpoint[4];      // For 3 characters after extractedStr and null terminator
+
+            // Copy characters after 'zwave-' into extractedStr
+            strncpy(extractedStr, foundStr + strlen(pattern), 4);
+            extractedStr[4] = '\0';  // Null terminate the extracted string
+
+            // Copy the next 3 characters after the extracted string
+            strncpy(endpoint, foundStr + strlen(pattern) + 6, 2);
+            endpoint[3] = '\0';  // Null terminate the endpoint string
+
+            // Check if the last extractedStr is different, then update tempArr1
+            if (tempArr1 == 0 || strcmp(deviceName[tempArr1 - 1], extractedStr) != 0) {
+                deviceName[tempArr1] = extractedStr;
+                tempArr1++;
+            }
+
+            // Check if the last endpoint is different, then update tempArr2
+            if (tempArr2 == 0 || strcmp(endpoint[tempArr2 - 1], endpoint) != 0) {
+                endpoint[tempArr2] = endpoint;
+                tempArr2++;
+            }
+
+            printf("Extracted substring: %s\n", extractedStr);
+            printf("Characters after extracted string: %s\n", endpoint);
+        } else {
+            printf("Pattern not found in the input string.\n");
+        }
+
+        i++;
     }
 
 }
